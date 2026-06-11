@@ -98,7 +98,6 @@ textarea.write-area:focus{outline:none;border-color:#1b75c0}
 <li onclick="sel(this)"><span class="cl">C</span>Without community health centers, millions of Americans would have no access to medical care.</li>
 <li onclick="sel(this)"><span class="cl">D</span>Community health centers receive federal funding under Section 330.</li>
 </ul><button class="btn-show" onclick="toggleReveal(this)">Show answer</button><div class="answer-reveal"><strong>Correct: C</strong> — A, B, and D are stated directly. C requires reasoning beyond the text — it is an inference supported by the passage but not explicitly stated.</div></div><div class="question-block hl"><div class="q-number">Question 4</div><div class="q-text">What is the <span class="ft">implied main idea</span> of this passage? Write it in one sentence.</div><textarea class="write-area" rows="3" placeholder="Write your answer here…"></textarea><button class="btn-show" onclick="toggleReveal(this)" style="margin-top:8px">Show answer</button><div class="answer-reveal"><strong>Model answer:</strong> Community health centers provide essential, affordable health care to Americans who need it most and would otherwise go without it.</div></div><div class="ged-tip"><strong>★ GED TEST TIP:</strong> An <span class="ft">inference</span> is not a guess — it is a conclusion supported by text evidence + what you already know. For every inference, find the sentence in the passage that supports it.</div></div><div class="bottom-nav"><span class="q-progress">4 questions</span><button class="btn btn-check" onclick="check()">Check Answers</button><button class="btn btn-download" onclick="downloadDocx()">⬇ Download My Work (.docx)</button></div></div></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.umd.min.js"></script>
 <script>
 function sel(el){const b=el.closest(".question-block");b.querySelectorAll(".choices li").forEach(l=>l.classList.remove("selected"));el.classList.add("selected")}
 function check(){document.querySelectorAll(".question-block[data-answer]").forEach(b=>{const a=b.dataset.answer,s=b.querySelector(".choices li.selected");if(!s)return;const l=s.querySelector(".cl").textContent.trim();b.querySelectorAll(".choices li").forEach(li=>{li.classList.remove("correct","wrong");if(li.querySelector(".cl").textContent.trim()===a)li.classList.add("correct")});if(l!==a)s.classList.add("wrong");const r=b.querySelector(".answer-reveal");if(r)r.classList.add("shown")});document.querySelectorAll(".write-area~.answer-reveal").forEach(r=>r.classList.add("shown"))}
@@ -108,6 +107,14 @@ function wc(el){const w=el.value.trim()?el.value.trim().split(/\s+/).length:0;co
 let secs=0;window.addEventListener("DOMContentLoaded",()=>{const t=document.getElementById("timer");if(t)setInterval(()=>{secs++;t.textContent=String(Math.floor(secs/60)).padStart(2,"0")+":"+String(secs%60).padStart(2,"0")},1000)});
 
 async function downloadDocx(){
+  if(!window.docx){
+    await new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.umd.min.js';
+      s.onload=res; s.onerror=rej;
+      document.head.appendChild(s);
+    });
+  }
   const {Document,Packer,Paragraph,TextRun,AlignmentType,BorderStyle,ShadingType,WidthType}=docx;
   const title=document.title.replace(' | GED RLA','');
   const sessionInfo=document.querySelector('.session-info')?document.querySelector('.session-info').textContent:'';

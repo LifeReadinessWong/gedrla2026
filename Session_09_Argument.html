@@ -104,7 +104,6 @@ textarea.write-area:focus{outline:none;border-color:#1b75c0}
 <li onclick="sel(this)"><span class="cl">C</span>Yes — it acknowledges that economic interests exist and that Alaska relies heavily on oil revenue.</li>
 <li onclick="sel(this)"><span class="cl">D</span>Yes — it agrees that the ANWR’s oil is needed for national security.</li>
 </ul><button class="btn-show" onclick="toggleReveal(this)">Show answer</button><div class="answer-reveal"><strong>Correct: C</strong> — Paragraph 2 acknowledges that 80%+ of Alaska’s revenues come from oil and that economic interests exist — a concession before countering.</div></div><div class="ged-tip"><strong>★ GED TEST TIP:</strong> A <span class="ft">claim</span> is arguable — someone could reasonably disagree. A <span class="ft">fact</span> is verifiable — you can look it up. Knowing the difference is essential for both reading arguments AND writing the Extended Response.</div></div><div class="bottom-nav"><span class="q-progress">4 questions</span><button class="btn btn-check" onclick="check()">Check Answers</button><button class="btn btn-download" onclick="downloadDocx()">⬇ Download My Work (.docx)</button></div></div></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.umd.min.js"></script>
 <script>
 function sel(el){const b=el.closest(".question-block");b.querySelectorAll(".choices li").forEach(l=>l.classList.remove("selected"));el.classList.add("selected")}
 function check(){document.querySelectorAll(".question-block[data-answer]").forEach(b=>{const a=b.dataset.answer,s=b.querySelector(".choices li.selected");if(!s)return;const l=s.querySelector(".cl").textContent.trim();b.querySelectorAll(".choices li").forEach(li=>{li.classList.remove("correct","wrong");if(li.querySelector(".cl").textContent.trim()===a)li.classList.add("correct")});if(l!==a)s.classList.add("wrong");const r=b.querySelector(".answer-reveal");if(r)r.classList.add("shown")});document.querySelectorAll(".write-area~.answer-reveal").forEach(r=>r.classList.add("shown"))}
@@ -114,6 +113,14 @@ function wc(el){const w=el.value.trim()?el.value.trim().split(/\s+/).length:0;co
 let secs=0;window.addEventListener("DOMContentLoaded",()=>{const t=document.getElementById("timer");if(t)setInterval(()=>{secs++;t.textContent=String(Math.floor(secs/60)).padStart(2,"0")+":"+String(secs%60).padStart(2,"0")},1000)});
 
 async function downloadDocx(){
+  if(!window.docx){
+    await new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.umd.min.js';
+      s.onload=res; s.onerror=rej;
+      document.head.appendChild(s);
+    });
+  }
   const {Document,Packer,Paragraph,TextRun,AlignmentType,BorderStyle,ShadingType,WidthType}=docx;
   const title=document.title.replace(' | GED RLA','');
   const sessionInfo=document.querySelector('.session-info')?document.querySelector('.session-info').textContent:'';
