@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sessions 17 & 18 — Extended Response: Highway 17 | GED RLA</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",Arial,sans-serif;font-size:15px;background:#f0f2f5;color:#1a1a1a;min-height:100vh}
+.topbar{background:#1b3a5c;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:13px;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.topbar .brand{font-size:15px;font-weight:700;letter-spacing:.5px}
+.topbar .session-info{color:#a8c4e0;font-size:12px}
+.timer{background:#0e2640;border:1px solid #3a6b9a;border-radius:4px;padding:4px 12px;font-family:monospace;font-size:14px;color:#7ec8f0;letter-spacing:1px}
+.ged-layout{display:grid;grid-template-columns:1fr 1fr;gap:0;height:calc(100vh - 46px);overflow:hidden}
+.passage-pane{background:#fff;border-right:2px solid #c8d6e5;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.question-pane{background:#f7f9fc;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.pane-header{background:#1b3a5c;color:#fff;padding:10px 18px;font-size:13px;font-weight:600;position:sticky;top:0;z-index:10}
+.pane-header .source-cite{font-size:11px;font-weight:400;color:#a8c4e0;margin-top:2px}
+.passage-body{padding:22px 24px;line-height:1.75;font-size:15px;flex:1;overflow-y:auto}
+.passage-body h3{font-size:15px;font-weight:700;color:#1b3a5c;margin-bottom:12px;border-bottom:2px solid #1b3a5c;padding-bottom:6px}
+.passage-body p{margin-bottom:14px}
+.passage-body ul{margin:8px 0 14px 20px}
+.passage-body ul li{margin-bottom:6px;line-height:1.6}
+.para-num{color:#888;font-size:11px;font-weight:700;vertical-align:super;margin-right:3px}
+.passage-tabs{display:flex;border-bottom:2px solid #c8d6e5;background:#f7f9fc;padding:0 18px}
+.passage-tab{padding:8px 16px;font-size:13px;font-weight:600;color:#555;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.passage-tab.active{color:#1b3a5c;border-bottom-color:#1b75c0}
+.passage-content{display:none}.passage-content.active{display:block}
+.question-body{padding:20px 22px;flex:1;overflow-y:auto}
+.question-block{background:#fff;border:1px solid #d4dde8;border-radius:6px;padding:18px 20px;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.question-block.hl{border-left:4px solid #1b75c0}
+.q-number{font-size:11px;font-weight:700;color:#1b75c0;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.q-text{font-size:15px;line-height:1.6;color:#1a1a1a;margin-bottom:14px;font-weight:500}
+.q-text .ft{font-weight:800;color:#1b3a5c;text-decoration:underline;text-decoration-color:#1b75c0;text-underline-offset:2px}
+.choices{list-style:none}
+.choices li{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:5px;cursor:pointer;border:1.5px solid #d4dde8;margin-bottom:7px;background:#fff;transition:all .15s;font-size:14px;line-height:1.5}
+.choices li:hover{border-color:#1b75c0;background:#eef4fb}
+.choices li.selected{border-color:#1b75c0;background:#ddeeff}
+.choices li.correct{border-color:#2a7a3b;background:#e8f5eb}
+.choices li.wrong{border-color:#c0392b;background:#fdecea}
+.cl{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;min-width:24px;border-radius:50%;border:1.5px solid #aaa;font-weight:700;font-size:12px;color:#555;background:#f8f8f8;flex-shrink:0}
+.choices li.selected .cl{border-color:#1b75c0;color:#1b75c0;background:#ddeeff}
+.choices li.correct .cl{border-color:#2a7a3b;color:#2a7a3b;background:#e8f5eb}
+.choices li.wrong .cl{border-color:#c0392b;color:#c0392b;background:#fdecea}
+textarea.write-area{width:100%;border:1.5px solid #c8d6e5;border-radius:4px;padding:10px 12px;font-size:14px;font-family:inherit;line-height:1.6;resize:vertical;min-height:90px;background:#fafcfe;color:#1a1a1a}
+textarea.write-area:focus{outline:none;border-color:#1b75c0}
+.answer-reveal{margin-top:10px;padding:10px 12px;background:#f0f7ff;border:1px solid #b3d0f0;border-radius:4px;font-size:13px;color:#1b3a5c;line-height:1.55;display:none}
+.answer-reveal.shown{display:block}
+.answer-reveal strong{color:#0e5fa6}
+.ged-tip{background:#fffde7;border:1px solid #f0c040;border-left:4px solid #e6a817;border-radius:4px;padding:12px 14px;margin-bottom:18px;font-size:13px;color:#5a4200;line-height:1.6}
+.ged-tip strong{color:#8b5e00}
+.bottom-nav{background:#1b3a5c;padding:10px 22px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0}
+.btn{padding:8px 18px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-check{background:#2a7a3b;color:#fff}.btn-check:hover{background:#1d5c2b}
+.btn-show{background:#5a3e7a;color:#fff;font-size:12px;padding:5px 12px;border:none;border-radius:4px;cursor:pointer;margin-top:8px}.btn-show:hover{background:#422d5a}
+.btn-download{background:#b85c00;color:#fff;font-size:13px;font-weight:600;padding:8px 16px;border-radius:4px;border:none;cursor:pointer}.btn-download:hover{background:#8f4700}
+.q-progress{color:#a8c4e0;font-size:12px;margin-right:auto}
+.er-layout{display:grid;grid-template-columns:1fr 1fr;gap:0;height:calc(100vh - 46px);overflow:hidden}
+.er-passage-pane{background:#fff;border-right:2px solid #c8d6e5;overflow-y:auto;min-height:0}
+.er-write-pane{background:#f7f9fc;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.er-prompt{background:#1b3a5c;color:#fff;padding:14px 20px;font-size:14px;line-height:1.6;position:sticky;top:0}
+.er-prompt strong{color:#7ec8f0}
+.er-editor{flex:1;padding:14px 18px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;min-height:0}
+.er-textarea{flex:1;width:100%;min-height:220px;border:1.5px solid #c8d6e5;border-radius:4px;padding:14px;font-size:15px;font-family:inherit;line-height:1.75;resize:none;background:#fff;color:#1a1a1a}
+.er-textarea:focus{outline:none;border-color:#1b75c0}
+.er-toolbar{background:#e8eef5;border-top:1px solid #c8d6e5;padding:8px 18px;display:flex;gap:10px;align-items:center;font-size:12px;color:#555;flex-wrap:wrap}
+.er-toolbar .word-count{color:#1b3a5c;font-weight:600}
+.plan-section{background:#fff;border:1px solid #d4dde8;border-radius:6px;padding:14px 16px;margin-bottom:10px}
+.plan-section h4{font-size:12px;font-weight:700;color:#1b75c0;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+.plan-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.plan-field label{display:block;font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.plan-field input,.plan-field textarea{width:100%;border:1.5px solid #c8d6e5;border-radius:3px;padding:5px 8px;font-size:13px;font-family:inherit;resize:none;background:#fafcfe;color:#1a1a1a;line-height:1.5}
+.plan-field input:focus,.plan-field textarea:focus{outline:none;border-color:#1b75c0}
+.rubric-section{background:#fff;border-top:2px solid #c8d6e5;padding:10px 18px}
+.rubric-section h4{font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.rubric-item{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:#444;margin-bottom:5px;line-height:1.5}
+.rubric-check{width:15px;height:15px;border:1.5px solid #aaa;border-radius:2px;cursor:pointer;flex-shrink:0;margin-top:1px;appearance:none;-webkit-appearance:none;background:#fff}
+.rubric-check:checked{background:#1b75c0;border-color:#1b75c0}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#f0f2f5}::-webkit-scrollbar-thumb{background:#b0bec5;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="topbar"><div><div class="brand">GED® Reasoning Through Language Arts</div><div class="session-info">Sessions 17 & 18  ·  July 13–15  ·  Week 7  ·  Extended Response: Paired Texts</div></div><div id="timer" class="timer">00:00</div></div>
+<div class="er-layout"><div class="er-passage-pane"><div class="pane-header">Passages — Highway 17<div class="source-cite">Source: GED Testing Service LLC, Extended Response Scoring Guide, 2022 (official GED Ready® prompt)</div></div><div id="tabs17" class="passage-tabs"><div class="passage-tab active" data-target="p17a" onclick="switchTab(this,'tabs17')">Text A — Press Release</div><div class="passage-tab" data-target="p17b" onclick="switchTab(this,'tabs17')">Text B — Letter to Editor</div></div><div class="passage-body"><div id="p17a" class="passage-content active"><h3>Text A — Press Release</h3><p style="font-size:12px;color:#555;margin-bottom:12px">Office of U.S. Representative Melody Walls</p>
+<p><span class="para-num">1</span>Representative Melody Walls announced that Congress passed the highway and transit bill today. “This bill funds the expansion of Highway 17 from a two-lane highway to a four-lane thoroughfare. It will positively affect the town of Oak Falls,” Walls said. As part of the expansion, Highway 17 will move two miles east of the town of Oak Falls. The bill will ease traffic congestion and create job opportunities during and after construction.</p>
+<p><span class="para-num">2</span>Last year, Representative Walls held town hall meetings to gather opinions from her constituents about revitalizing the economy in the 12th District. Two years ago, Turnaround Motors and Bell Camera closed their factory doors, resulting in high unemployment with no immediate prospects for new businesses.</p>
+<p><span class="para-num">3</span>Improving the highway means jobs for local construction workers. Once completed, the highway will bring more long-distance travelers into the area. Some officials anticipate a 30% increase in highway traffic. An increase in travelers will attract national motel and restaurant chains, meaning permanent jobs for residents. In the future, historical features in Oak Falls — such as brick streets and an old wheat mill — will likely become tourist attractions.</p>
+<p><span class="para-num">4</span>The improved highway will eliminate eighteen-wheeler traffic through towns. A 2001 study in Texas showed that bypasses reduce traffic through towns by as much as 75%. Eliminating heavy truck traffic will also reduce road maintenance costs. The improvement of Highway 17, funded by federal tax allocations, is an important investment in the area.</p>
+<p style="font-size:11px;color:#888;margin-top:14px;border-top:1px solid #eee;padding-top:8px">Source: GED Testing Service LLC, Extended Response Scoring Guide, 2022</p></div><div id="p17b" class="passage-content"><h3>Text B — Letter to the Editor</h3><p style="font-size:12px;color:#555;margin-bottom:12px">Oak Falls Gazette</p>
+<p><span class="para-num">1</span>I am a small-business owner living in Representative Walls’s congressional district. A bill has been passed to expand Highway 17 from a two-lane highway to a four-lane thoroughfare. This change includes plans to move Highway 17 two miles to the east, which means it will now bypass our town completely. I find this unacceptable.</p>
+<p><span class="para-num">2</span>The Gazette reports that because Highway 17 runs through six states, construction will be paid for with federal road funds. That means some of our federal taxes will pay for a road that I believe will harm our town. Our town and district will lose money as a result.</p>
+<p><span class="para-num">3</span>The road construction jobs are only a temporary bandage on the wound made by our two manufacturers closing their doors. Once the road construction is finished, only minimum wage jobs will remain. In fact, the highway will bypass four cities in our district alone. Each of these towns will lose business because fewer travelers will pass through them. There is no guarantee that tourists will drive an extra two miles into our town if national chain motels and restaurants are built at the highway exits.</p>
+<p><span class="para-num">4</span>The 2001 study Representative Walls references does show that bypasses reduce traffic and noise in towns, but the study also shows they have a negative impact on local businesses — information the press release left out. Representative Walls held town hall meetings to hear residents’ opinions, but obviously she did not listen to the concerns they voiced.</p>
+<p style="font-size:11px;color:#888;margin-top:14px;border-top:1px solid #eee;padding-top:8px">Source: GED Testing Service LLC, Extended Response Scoring Guide, 2022</p></div></div></div><div class="er-write-pane"><div class="er-prompt"><strong>Extended Response — Sessions 17 & 18</strong><br>Analyze both texts and determine which position is better supported. <em>Session 17: thesis. Session 18: one body paragraph.</em></div><div class="er-editor"><div class="plan-section"><h4>Planning (5 min)</h4><div class="plan-row"><div class="plan-field"><label>Text A main claim</label><textarea rows="2" placeholder="What is the press release arguing?"></textarea></div><div class="plan-field"><label>Text B main claim</label><textarea rows="2" placeholder="What is the letter arguing?"></textarea></div></div><div class="plan-row"><div class="plan-field"><label>Text A strongest evidence</label><textarea rows="2" placeholder="Most specific, credible piece of evidence…"></textarea></div><div class="plan-field"><label>Text B strongest evidence</label><textarea rows="2" placeholder="Most specific, credible piece of evidence…"></textarea></div></div></div><div class="plan-section"><h4>Session 17 — Thesis Statement + Session 18 — Body Paragraph</h4><textarea class="er-textarea" rows="8" placeholder="Write your response here…" oninput="wc(this)"></textarea></div><div class="plan-section"><h4>Key question: How do both texts use the 2001 study differently?</h4><div class="plan-field"><label>Your answer</label><textarea rows="2" placeholder="Text A uses it to show… Text B uses it to show…"></textarea></div></div></div><div class="er-toolbar"><span>Type your response above</span><span class="word-count">0 words</span><button class="btn btn-download" onclick="downloadDocx()">⬇ Download My Work (.docx)</button></div><div class="rubric-section"><h4>Self-check / Rubric</h4><div class="rubric-item"><input type="checkbox" class="rubric-check"><span>Thesis takes a clear position — not just 'both sides have good points.'</span></div><div class="rubric-item"><input type="checkbox" class="rubric-check"><span>I note how both texts use the same 2001 study differently.</span></div><div class="rubric-item"><input type="checkbox" class="rubric-check"><span>Body paragraph (S18): topic sentence → evidence (cited) → analysis → transition.</span></div><div class="rubric-item"><input type="checkbox" class="rubric-check"><span>I acknowledged the other side at least once.</span></div></div></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.umd.min.js"></script>
+<script>
+function sel(el){const b=el.closest(".question-block");b.querySelectorAll(".choices li").forEach(l=>l.classList.remove("selected"));el.classList.add("selected")}
+function check(){document.querySelectorAll(".question-block[data-answer]").forEach(b=>{const a=b.dataset.answer,s=b.querySelector(".choices li.selected");if(!s)return;const l=s.querySelector(".cl").textContent.trim();b.querySelectorAll(".choices li").forEach(li=>{li.classList.remove("correct","wrong");if(li.querySelector(".cl").textContent.trim()===a)li.classList.add("correct")});if(l!==a)s.classList.add("wrong");const r=b.querySelector(".answer-reveal");if(r)r.classList.add("shown")});document.querySelectorAll(".write-area~.answer-reveal").forEach(r=>r.classList.add("shown"))}
+function toggleReveal(btn){const b=btn.closest(".question-block"),r=b.querySelector(".answer-reveal");if(r){r.classList.toggle("shown");btn.textContent=r.classList.contains("shown")?"Hide answer":"Show answer"}}
+function switchTab(t,g){const gr=document.getElementById(g);gr.querySelectorAll(".passage-tab").forEach(x=>x.classList.remove("active"));gr.querySelectorAll(".passage-content").forEach(x=>x.classList.remove("active"));t.classList.add("active");document.getElementById(t.dataset.target).classList.add("active")}
+function wc(el){const w=el.value.trim()?el.value.trim().split(/\s+/).length:0;const pane=el.closest(".er-write-pane")||el.closest(".er-editor");if(pane){const wce=pane.querySelector(".word-count");if(wce)wce.textContent=w+" words"}}
+let secs=0;window.addEventListener("DOMContentLoaded",()=>{const t=document.getElementById("timer");if(t)setInterval(()=>{secs++;t.textContent=String(Math.floor(secs/60)).padStart(2,"0")+":"+String(secs%60).padStart(2,"0")},1000)});
+
+async function downloadDocx(){
+  const {Document,Packer,Paragraph,TextRun,AlignmentType,BorderStyle,ShadingType,WidthType}=docx;
+  const title=document.title.replace(' | GED RLA','');
+  const sessionInfo=document.querySelector('.session-info')?document.querySelector('.session-info').textContent:'';
+  const dateStr=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  function p(text,opts={}){return new Paragraph({children:[new TextRun({text:String(text||''),font:"Calibri",size:opts.size||22,bold:opts.bold||false,italics:opts.italic||false,color:opts.color||"1a1a1a"})],spacing:{before:opts.before||80,after:opts.after||80},alignment:opts.align||AlignmentType.LEFT})}
+  function h(text,level){const sz={1:32,2:26,3:22}[level]||22;const col={1:"1b3a5c",2:"1b75c0",3:"333333"}[level]||"1a1a1a";return new Paragraph({children:[new TextRun({text,font:"Calibri",size:sz,bold:true,color:col})],spacing:{before:180,after:90}})}
+  function rule(){return new Paragraph({children:[new TextRun({text:""})],border:{bottom:{style:BorderStyle.SINGLE,size:6,color:"c8d6e5"}},spacing:{before:60,after:120}})}
+  const kids=[];
+  kids.push(h("GED® Reasoning Through Language Arts",1));
+  kids.push(p(sessionInfo,{bold:true,color:"1b75c0",size:20}));
+  kids.push(p("Downloaded: "+dateStr,{italic:true,size:18,color:"666666"}));
+  kids.push(rule());
+  // Passages
+  const allContents=document.querySelectorAll('.passage-content');
+  const allTabs=document.querySelectorAll('.passage-tab');
+  if(allContents.length>0){
+    kids.push(h("PASSAGES",2));
+    allContents.forEach((c,i)=>{
+      const lab=allTabs[i]?allTabs[i].textContent.trim():"Text "+(i+1);
+      kids.push(h(lab,3));
+      const h3=c.querySelector('h3');if(h3)kids.push(p(h3.textContent.trim(),{bold:true}));
+      c.querySelectorAll('p').forEach(pg=>{const t=pg.textContent.trim();if(t&&t.length>10&&!t.startsWith('Source:'))kids.push(p(t,{size:21,after:100}))});
+      c.querySelectorAll('li').forEach(li=>kids.push(p('•  '+li.textContent.trim(),{size:21,before:30,after:30})));
+      const src=c.querySelector('p[style*="font-size:11px"]');if(src)kids.push(p(src.textContent.trim(),{size:17,italic:true,color:"888888"}));
+      kids.push(rule());
+    });
+  } else {
+    const pb=document.querySelector('.passage-body');
+    if(pb){
+      kids.push(h("PASSAGE",2));
+      const h3=pb.querySelector('h3');if(h3)kids.push(p(h3.textContent.trim(),{bold:true}));
+      pb.querySelectorAll('p').forEach(pg=>{const t=pg.textContent.trim();if(t&&t.length>10&&!t.startsWith('Source:'))kids.push(p(t,{size:21,after:100}))});
+      pb.querySelectorAll('li').forEach(li=>kids.push(p('•  '+li.textContent.trim(),{size:21})));
+      kids.push(rule());
+    }
+  }
+  // Questions
+  kids.push(h("QUESTIONS & RESPONSES",2));
+  document.querySelectorAll('.question-block').forEach((block,i)=>{
+    const qn=block.querySelector('.q-number');const qt=block.querySelector('.q-text');if(!qt)return;
+    kids.push(new Paragraph({children:[new TextRun({text:(qn?qn.textContent.trim():"Q"+(i+1)),font:"Calibri",size:20,bold:true,color:"1b75c0"})],spacing:{before:160,after:60}}));
+    kids.push(p(qt.textContent.trim(),{size:22,after:100}));
+    block.querySelectorAll('.choices li').forEach(li=>{
+      const letter=li.querySelector('.cl')?li.querySelector('.cl').textContent.trim():'';
+      const ct=li.textContent.replace(letter,'').trim();
+      const marker=li.classList.contains('correct')?'✓  ':li.classList.contains('wrong')?'✗  ':li.classList.contains('selected')?'►  ':'   ';
+      kids.push(new Paragraph({children:[new TextRun({text:marker+letter+'.  '+ct,font:"Calibri",size:21,color:li.classList.contains('correct')?'2a7a3b':li.classList.contains('wrong')?'c0392b':'333333',bold:li.classList.contains('correct')||li.classList.contains('wrong')})],spacing:{before:40,after:40},indent:{left:360}}));
+    });
+    const ta=block.querySelector('textarea.write-area');
+    if(ta){kids.push(p("My response:",{bold:true,size:20,color:"1b3a5c",before:100}));const val=ta.value.trim()||"[No response written]";val.split('
+').forEach(line=>kids.push(p(line||" ",{size:21,before:20,after:20})));}
+    const rev=block.querySelector('.answer-reveal');
+    if(rev&&rev.classList.contains('shown'))kids.push(new Paragraph({children:[new TextRun({text:rev.textContent.trim(),font:"Calibri",size:19,italic:true,color:"0e5fa6"})],spacing:{before:80,after:60},indent:{left:360}}));
+    kids.push(rule());
+  });
+  // Planning
+  const planSecs=document.querySelectorAll('.plan-section');
+  if(planSecs.length>0){
+    kids.push(h("PLANNING NOTES",2));
+    planSecs.forEach(sec=>{
+      const h4=sec.querySelector('h4');if(h4)kids.push(p(h4.textContent.trim(),{bold:true,color:"1b75c0",size:20,before:120}));
+      sec.querySelectorAll('input,textarea').forEach(field=>{
+        const lab=field.closest('.plan-field')?field.closest('.plan-field').querySelector('label'):null;
+        if(lab)kids.push(p(lab.textContent.trim()+":",{bold:true,size:19,color:"555555",before:80,after:20}));
+        const val=field.value.trim()||"[No response]";val.split('
+').forEach(line=>kids.push(p(line||" ",{size:21,before:10,after:10})));
+      });
+    });
+    kids.push(rule());
+  }
+  // Essay
+  const erTA=document.querySelector('.er-textarea');
+  if(erTA){kids.push(h("ESSAY RESPONSE",2));const val=erTA.value.trim()||"[No essay written]";val.split('
+').forEach(line=>kids.push(p(line||" ",{size:22,after:120})));kids.push(rule());}
+  // Rubric
+  const rubItems=document.querySelectorAll('.rubric-item');
+  if(rubItems.length>0){
+    kids.push(h("SELF-CHECK / RUBRIC",2));
+    rubItems.forEach(item=>{const cb=item.querySelector('.rubric-check');const txt=item.textContent.trim();kids.push(p((cb&&cb.checked?'✓  ':'□  ')+txt,{size:20,before:40,after:40}));});
+    kids.push(rule());
+  }
+  kids.push(p("GED® is a registered trademark of the American Council on Education. GED Testing Service LLC. All rights reserved.",{size:17,italic:true,color:"888888",before:200}));
+  const doc=new Document({styles:{default:{document:{run:{font:"Calibri",size:22}}}},sections:[{properties:{page:{size:{width:12240,height:15840},margin:{top:1080,right:1080,bottom:1080,left:1080}}},children:kids}]});
+  const blob=await Packer.toBlob(doc);
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=title.replace(/[^a-zA-Z0-9_\- ]/g,'_').replace(/\s+/g,'_')+'_responses.docx';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+</script>
+</body></html>
