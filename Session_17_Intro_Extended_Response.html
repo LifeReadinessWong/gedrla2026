@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Session 17 &#8212; Introduction to the Extended Response | GED RLA</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", Arial, sans-serif; font-size: 15px; background: #f0f2f5; color: #1a1a1a; }
+.topbar { background: #1b3a5c; color: #fff; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.brand { font-size: 15px; font-weight: 700; }
+.session-info { font-size: 12px; color: #a8c4e0; }
+.timer { background: #0e2640; border: 1px solid #3a6b9a; border-radius: 4px; padding: 4px 12px; font-family: monospace; font-size: 14px; color: #7ec8f0; }
+.layout { display: grid; grid-template-columns: 1fr 1fr; height: calc(100vh - 46px); overflow: hidden; }
+.er-layout { display: grid; grid-template-columns: 1fr 1fr; height: calc(100vh - 46px); overflow: hidden; }
+.pane { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.pane-left { border-right: 2px solid #c8d6e5; background: #fff; }
+.pane-right { background: #f7f9fc; }
+.pane-header { background: #1b3a5c; color: #fff; padding: 10px 18px; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+.pane-header .cite { font-size: 11px; font-weight: 400; color: #a8c4e0; margin-top: 2px; }
+.scroll-area { flex: 1; overflow-y: auto; padding: 22px 24px; }
+.passage h3 { font-size: 15px; font-weight: 700; color: #1b3a5c; border-bottom: 2px solid #1b3a5c; padding-bottom: 6px; margin-bottom: 14px; }
+.passage p { margin-bottom: 14px; line-height: 1.75; }
+.passage ul { margin: 8px 0 14px 20px; }
+.passage ul li { margin-bottom: 6px; line-height: 1.6; }
+.pnum { color: #888; font-size: 11px; font-weight: 700; vertical-align: super; margin-right: 3px; }
+.source { font-size: 11px; color: #888; font-style: italic; border-top: 1px solid #eee; padding-top: 8px; margin-top: 8px; }
+.byline { font-size: 12px; color: #555; margin-bottom: 12px; }
+.tabs { display: flex; border-bottom: 2px solid #c8d6e5; background: #f7f9fc; padding: 0 18px; flex-shrink: 0; }
+.tab { padding: 8px 16px; font-size: 13px; font-weight: 600; color: #555; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+.tab.active { color: #1b3a5c; border-bottom-color: #1b75c0; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.qblock { background: #fff; border: 1px solid #d4dde8; border-left: 4px solid #1b75c0; border-radius: 6px; padding: 18px 20px; margin-bottom: 18px; }
+.qnum { font-size: 11px; font-weight: 700; color: #1b75c0; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px; }
+.qtext { font-size: 15px; font-weight: 500; line-height: 1.6; margin-bottom: 14px; }
+.qtext .ft { font-weight: 800; color: #1b3a5c; text-decoration: underline; text-decoration-color: #1b75c0; text-underline-offset: 2px; }
+.choices { list-style: none; }
+.choices li { display: flex; align-items: flex-start; gap: 10px; padding: 9px 12px; border-radius: 5px; border: 1.5px solid #d4dde8; margin-bottom: 7px; background: #fff; cursor: pointer; font-size: 14px; line-height: 1.5; transition: border-color .15s, background .15s; }
+.choices li:hover { border-color: #1b75c0; background: #eef4fb; }
+.choices li.selected { border-color: #1b75c0; background: #ddeeff; }
+.choices li.correct { border-color: #2a7a3b; background: #e8f5eb; }
+.choices li.wrong { border-color: #c0392b; background: #fdecea; }
+.cl { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; min-width: 24px; border-radius: 50%; border: 1.5px solid #aaa; font-weight: 700; font-size: 12px; flex-shrink: 0; background: #f8f8f8; }
+.choices li.selected .cl { border-color: #1b75c0; color: #1b75c0; }
+.choices li.correct .cl { border-color: #2a7a3b; color: #2a7a3b; }
+.choices li.wrong .cl { border-color: #c0392b; color: #c0392b; }
+.reveal { display: none; margin-top: 10px; padding: 10px 12px; background: #f0f7ff; border: 1px solid #b3d0f0; border-radius: 4px; font-size: 13px; color: #1b3a5c; line-height: 1.55; }
+.reveal.open { display: block; }
+.write-area { width: 100%; border: 1.5px solid #c8d6e5; border-radius: 4px; padding: 10px 12px; font-size: 14px; font-family: inherit; line-height: 1.6; resize: vertical; min-height: 80px; background: #fafcfe; color: #1a1a1a; margin-top: 4px; }
+.write-area:focus { outline: none; border-color: #1b75c0; }
+.btn-show { margin-top: 10px; padding: 5px 14px; background: #5a3e7a; color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.btn-show:hover { background: #422d5a; }
+.tip { background: #fffde7; border: 1px solid #f0c040; border-left: 4px solid #e6a817; border-radius: 4px; padding: 12px 14px; font-size: 13px; color: #5a4200; line-height: 1.6; margin-bottom: 18px; }
+.tip strong { color: #8b5e00; }
+.bottom-bar { background: #1b3a5c; padding: 10px 22px; display: flex; gap: 10px; align-items: center; justify-content: flex-end; flex-shrink: 0; }
+.btn-check { padding: 8px 20px; background: #2a7a3b; color: #fff; border: none; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.btn-check:hover { background: #1d5c2b; }
+.btn-dl { padding: 8px 20px; background: #b85c00; color: #fff; border: none; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.btn-dl:hover { background: #8f4700; }
+.er-prompt { background: #1b3a5c; color: #fff; padding: 14px 20px; font-size: 14px; line-height: 1.6; flex-shrink: 0; }
+.er-prompt strong { color: #7ec8f0; }
+.er-prompt em { color: #a8c4e0; font-size: 12px; }
+.er-write { flex: 1; overflow-y: auto; padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; }
+.plan-box { background: #fff; border: 1px solid #d4dde8; border-radius: 6px; padding: 14px 16px; }
+.plan-box h4 { font-size: 12px; font-weight: 700; color: #1b75c0; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 10px; }
+.plan-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.plan-field label { display: block; font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 3px; }
+.plan-field textarea, .plan-field input { width: 100%; border: 1.5px solid #c8d6e5; border-radius: 3px; padding: 5px 8px; font-size: 13px; font-family: inherit; resize: none; background: #fafcfe; color: #1a1a1a; line-height: 1.5; }
+.plan-field textarea:focus, .plan-field input:focus { outline: none; border-color: #1b75c0; }
+.essay-area { width: 100%; border: 1.5px solid #c8d6e5; border-radius: 4px; padding: 14px; font-size: 15px; font-family: inherit; line-height: 1.75; resize: none; background: #fff; color: #1a1a1a; min-height: 200px; }
+.essay-area:focus { outline: none; border-color: #1b75c0; }
+.er-toolbar { background: #e8eef5; border-top: 1px solid #c8d6e5; padding: 8px 18px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; flex-shrink: 0; }
+.word-count { font-size: 12px; color: #1b3a5c; font-weight: 600; margin-right: auto; }
+.rubric-box { background: #fff; border-top: 2px solid #c8d6e5; padding: 10px 18px; flex-shrink: 0; }
+.rubric-box h4 { font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+.rubric-item { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; color: #444; margin-bottom: 5px; line-height: 1.5; }
+.rubric-item input[type=checkbox] { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; cursor: pointer; accent-color: #1b75c0; }
+</style>
+</head>
+<body>
+<div class="topbar"><div><div class="brand">GED&#174; Reasoning Through Language Arts</div><div class="session-info">Session 17 &nbsp;&middot;&nbsp; Monday, July 13 &nbsp;&middot;&nbsp; Week 7 &nbsp;&middot;&nbsp; Introduction to the Extended Response</div></div><div class="timer" id="timer">00:00</div></div>
+<div class="layout">
+  <div class="pane pane-left">
+    <div class="pane-header">Passages<div class="cite">Original passages written for this program (community solar energy, GED argumentative genre)</div></div>
+    <div class="tab-group tabs"><div class="tab active" data-target="s17a">Text A &#8212; In Support</div><div class="tab" data-target="s17b">Text B &#8212; Concerns</div></div>
+    <div class="scroll-area"><div class="passage"><div class="tab-content active" id="s17a"><h3>Text A &#8212; In Support of Community Solar</h3><p class="byline">Editorial &#8212; Honolulu Community Review</p><p><span class="pnum">1</span>Community solar programs — shared solar installations that allow residents to subscribe to a portion of a solar array rather than install panels on their own roofs — represent one of the most promising tools for expanding clean energy access in Hawaii. Unlike rooftop solar, which requires homeowners to own their home, have a suitable roof, and afford significant upfront costs, community solar opens renewable energy to renters, low-income households, and residents of multi-unit buildings who have been largely left out of the solar revolution.</p><p><span class="pnum">2</span>The financial case is compelling. Subscribers to community solar programs typically see reductions of 10 to 15 percent on their electricity bills, with no installation costs, no maintenance responsibilities, and no long-term equipment commitment. For families in Hawaii who pay some of the highest electricity rates in the nation, even a modest reduction in monthly bills can make a meaningful difference. Studies in states with established community solar programs have found that low-income subscribers save a higher percentage of their income than higher-income subscribers, making community solar one of the more progressive energy policies available.</p><p><span class="pnum">3</span>Critics argue that community solar programs require government subsidies that could be better spent elsewhere. But the subsidies involved are modest compared to the long-term savings they generate, and the environmental benefits compound over time. Every kilowatt-hour generated by community solar displaces fossil fuel generation, reducing greenhouse gas emissions and Hawaii&#8217;s dependence on imported oil. The question is not whether we can afford to invest in community solar. It is whether we can afford not to.</p><p><span class="pnum">4</span>Community solar also creates local jobs in installation, maintenance, and administration. These are not temporary construction positions but ongoing employment opportunities that keep energy dollars circulating within the local economy rather than flowing to mainland fuel suppliers. Expanding community solar in Hawaii is not simply an energy policy. It is an economic development strategy for communities that have long paid the highest price for energy in the country.</p><p class="source">Source: Original passage written for this program (community solar energy, GED argumentative genre)</p></div><div class="tab-content" id="s17b"><h3>Text B &#8212; Concerns About Community Solar</h3><p class="byline">Letter to the Editor &#8212; Hawaii Business Journal</p><p><span class="pnum">1</span>Community solar programs are generating considerable enthusiasm among clean energy advocates, and the instinct behind them &#8212; expanding solar access beyond homeowners &#8212; is genuinely good. But enthusiasm should not substitute for scrutiny. Before Hawaii expands its community solar commitments significantly, policymakers should take a careful look at the evidence on program costs, subscriber retention, and the actual distribution of benefits.</p><p><span class="pnum">2</span>The projected savings for subscribers depend heavily on the difference between subscription rates and utility rates over time. In markets where utility rates have been more stable than expected, community solar subscribers have seen savings that were significantly smaller than advertised. In some cases, subscribers locked into multi-year contracts have found themselves paying more than they would have under standard utility rates when electricity prices fell or rates were restructured. The financial benefits are real in the right circumstances, but they are not guaranteed.</p><p><span class="pnum">3</span>There are also legitimate questions about who actually benefits from community solar subsidies. Research from several states has found that in practice, the majority of subscribers are middle- and upper-income households, not the low-income families that program advocates highlight. Low-income households often face barriers including credit requirements, awareness gaps, and the complexity of enrollment that prevent them from accessing programs nominally designed for them. Subsidizing community solar without addressing these barriers risks creating a program that transfers public funds primarily to households that are already energy-secure.</p><p><span class="pnum">4</span>None of this means community solar is a bad idea. It means community solar programs need to be designed carefully, evaluated rigorously, and held to the outcomes they promise. Expansion should follow evidence, not just advocacy. Hawaii can lead on community energy &#8212; but only if it insists on programs that actually deliver their promised benefits to the households that need them most.</p><p class="source">Source: Original passage written for this program (community solar energy, GED argumentative genre)</p></div></div></div>
+  </div>
+  <div class="pane pane-right">
+    <div class="pane-header">Questions</div>
+    <div class="scroll-area"><div class="qblock" id="s17q1" data-answer="B"><div class="qnum">Question 1</div><div class="qtext">What is the main <span class="ft">claim</span> of Text A?</div><ul class="choices"><li data-letter="A"><span class="cl">A</span>Community solar programs are too expensive for most Hawaii residents.</li>
+<li data-letter="B"><span class="cl">B</span>Community solar programs should be expanded because they lower costs, create jobs, and broaden clean energy access.</li>
+<li data-letter="C"><span class="cl">C</span>Hawaii should require all residents to subscribe to community solar.</li>
+<li data-letter="D"><span class="cl">D</span>Solar subsidies are wasteful compared to other energy investments.</li>
+</ul><button class="btn-show" data-target="revs17q1">Show answer</button><div class="reveal" id="revs17q1"><strong>Correct: B</strong> &#8212; Text A argues for expanding community solar, citing financial benefits, job creation, and environmental impact. Option B captures all three elements of the claim.</div></div><div class="qblock" id="s17q2" data-answer="C"><div class="qnum">Question 2</div><div class="qtext">Which piece of <span class="ft">evidence</span> from Text A is the STRONGEST support for its claim?</div><ul class="choices"><li data-letter="A"><span class="cl">A</span>Hawaii pays some of the highest electricity rates in the nation.</li>
+<li data-letter="B"><span class="cl">B</span>Community solar creates ongoing local jobs rather than temporary construction positions.</li>
+<li data-letter="C"><span class="cl">C</span>Subscribers typically see 10&#8211;15% bill reductions with no installation costs, and low-income subscribers save a higher percentage of their income.</li>
+<li data-letter="D"><span class="cl">D</span>Every kilowatt-hour of community solar displaces fossil fuel generation.</li>
+</ul><button class="btn-show" data-target="revs17q2">Show answer</button><div class="reveal" id="revs17q2"><strong>Correct: C</strong> &#8212; Option C is the strongest because it is specific, verifiable, and directly addresses the two core claims: savings for subscribers and equity for low-income families.</div></div><div class="qblock" id="s17q3" data-answer="B"><div class="qnum">Question 3</div><div class="qtext">What <span class="ft">counterclaim</span> does Text A acknowledge before countering it?</div><ul class="choices"><li data-letter="A"><span class="cl">A</span>Community solar programs are too complicated for low-income families to enroll in.</li>
+<li data-letter="B"><span class="cl">B</span>Critics argue that community solar subsidies could be better spent elsewhere.</li>
+<li data-letter="C"><span class="cl">C</span>Hawaii&#8217;s electricity rates are too unstable for community solar savings to be reliable.</li>
+<li data-letter="D"><span class="cl">D</span>Community solar does not actually reduce greenhouse gas emissions.</li>
+</ul><button class="btn-show" data-target="revs17q3">Show answer</button><div class="reveal" id="revs17q3"><strong>Correct: B</strong> &#8212; Paragraph 3 of Text A explicitly names the subsidy criticism before rebutting it &#8212; a classic concede-and-counter move that strengthens the argument&#8217;s credibility.</div></div><div class="qblock" id="s17q4" data-answer="B"><div class="qnum">Question 4</div><div class="qtext">Which argument does Text B make that Text A does NOT address?</div><ul class="choices"><li data-letter="A"><span class="cl">A</span>Community solar can reduce Hawaii&#8217;s dependence on imported oil.</li>
+<li data-letter="B"><span class="cl">B</span>Subscribers may not save as much as advertised if utility rates change or fall.</li>
+<li data-letter="C"><span class="cl">C</span>Community solar programs create local jobs.</li>
+<li data-letter="D"><span class="cl">D</span>Low-income households are the intended beneficiaries of community solar.</li>
+</ul><button class="btn-show" data-target="revs17q4">Show answer</button><div class="reveal" id="revs17q4"><strong>Correct: B</strong> &#8212; Text A does not address the risk that savings projections may not hold if electricity rates change &#8212; a significant gap that Text B identifies as a reason for caution.</div></div><div class="qblock" id="s17q5"><div class="qnum">Question 5</div><div class="qtext">Using both texts, write a one-sentence <span class="ft">thesis</span> for a GED Extended Response. Your thesis should take a clear position on which argument is better supported. Include: (1) acknowledgment of the other side, (2) your position, and (3) a reason.</div><textarea class="write-area" placeholder="Write your answer here&#8230;"></textarea><button class="btn-show" data-target="revs17q5">Show answer</button><div class="reveal" id="revs17q5"><strong>Model answer:</strong> While Text B raises valid concerns about whether community solar programs reliably reach low-income households, Text A makes a stronger case by providing specific evidence of savings, job creation, and environmental benefits that address Hawaii&#8217;s most pressing energy challenges.</div></div><div class="tip"><strong>&#9733; GED TEST TIP:</strong> A strong <strong>thesis</strong> does three things: takes a clear position (not just "both sides have points"), acknowledges the other side, and points toward the evidence you will use. Write it last — after you have read both texts carefully.</div></div>
+    <div class="bottom-bar"><button class="btn-check" id="btnCheck">Check Answers</button><button class="btn-dl" id="btnDl">&#8595; Download My Work (.docx)</button></div>
+  </div>
+</div>
+<script src="ged.js"></script>
+</body>
+</html>
